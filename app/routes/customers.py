@@ -13,6 +13,7 @@ schema = CustomerSchema()
 schemas = CustomerSchema(many=True)
 
 @customers_bp.get('/')
+@jwt_required()
 def get_all_customers():
     if len(request.args) == 0:
         customers = Customer.query.all()
@@ -21,6 +22,7 @@ def get_all_customers():
     return jsonify(schemas.dump(customers))
 
 @customers_bp.get('/<int:id>')
+@jwt_required()
 def get_customer(id):
     customer = Customer.query.get_or_404(id)
     return jsonify(schema.dump(customer)), HTTPStatus.OK
@@ -97,5 +99,5 @@ def delete_user(id: int):
     return jsonify(), HTTPStatus.NO_CONTENT
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
-def not_found():
+def not_found(error):
     return jsonify({"error": "Customer not found"}), HTTPStatus.NOT_FOUND
