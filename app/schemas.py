@@ -7,7 +7,7 @@ class CustomerSchema(Schema):
     name = fields.String(
         required=True,
         validate=[
-            validate.Regexp('^([A-Z][a-z]+)(\s[A-Z][a-z]+)*$', error="El nombre debe iniciar con mayúscula y contener solo letras."),
+            validate.Regexp(r'^[A-Z][a-z]+(?: [A-Z][a-z]+)*$', error="El nombre debe iniciar con mayúscula y contener solo letras."),
             validate.Length(min=3, error="El nombre debe tener al menos 3 caracteres."),
         ],
         error_messages={"required": "El nombre es obligatorio."}
@@ -15,7 +15,7 @@ class CustomerSchema(Schema):
     lastname = fields.String(
         required=True,
         validate=[
-            validate.Regexp('^([A-Z][a-z]+)(\s[A-Z][a-z]+)*$', error="El apellido debe iniciar con mayúscula y contener solo letras."),
+            validate.Regexp(r'^[A-Z][a-z]+(?: [A-Z][a-z]+)*$', error="El apellido debe iniciar con mayúscula y contener solo letras."),
             validate.Length(min=3, error="El apellido debe tener al menos 3 caracteres."),
         ],
         error_messages={"required": "El apellido es obligatorio."}
