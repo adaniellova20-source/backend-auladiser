@@ -14,19 +14,22 @@ customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
 
 @customers_bp.get('')
-@jwt_required
+@jwt_required()
 def get_all_customers():
-    customers = Customer.query.all()
+    if request.args:
+        customers = Customer.query.filter_by(**request.args)
+    else:
+        customers = Customer.query.all()
     return jsonify(customers_schema.dump(customers)), HTTPStatus.OK
 
 @customers_bp.get('/<int:id>')
-@jwt_required
+@jwt_required()
 def get_customer_by_id(id):
     customer = Customer.query.get_or_404(id)
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.post('')
-@jwt_required
+@jwt_required()
 def create_customer():
     try:
         data = customer_schema.load(request.json)
@@ -39,7 +42,7 @@ def create_customer():
     return jsonify(customer_schema.dump(customer)), HTTPStatus.CREATED
 
 @customers_bp.put("/<int:id>")
-@jwt_required
+@jwt_required()
 def update_customer(id):
     try:
         data = customer_schema.load(request.json, partial=True)
@@ -60,7 +63,7 @@ def update_customer(id):
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.delete("/<int:id>")
-@jwt_required
+@jwt_required()
 def delete_customer(id):
     customer = Customer.query.get_or_404(id)
     db.session.delete(customer)
@@ -68,6 +71,5 @@ def delete_customer(id):
     return jsonify(), HTTPStatus.NO_CONTENT
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
-@jwt_required
 def not_found(error):
     return jsonify({"error": "Customer not found"}), HTTPStatus.NOT_FOUND
