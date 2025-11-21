@@ -22,8 +22,6 @@ def get_token():
     except ValidationError as e:
         return jsonify({'message': str(e)}), HTTPStatus.BAD_REQUEST
 
-    print(request.headers['Authorization'])
-
     env_user = os.getenv('USER')
     env_password = os.getenv('PASSWORD')
 
