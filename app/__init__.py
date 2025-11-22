@@ -20,6 +20,8 @@ def create_app():
         }
     })
 
+    app.url_map.strict_slashes = False
+
     register_routes(app)
 
     return app
