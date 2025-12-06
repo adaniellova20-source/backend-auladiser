@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
@@ -9,6 +10,8 @@ from app.models import Customer
 from app.schemas import CustomerSchema
 
 customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
+
+logger = logging.getLogger(__name__)
 
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
@@ -72,4 +75,5 @@ def delete_customer(id):
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
 def not_found(error):
+    logger.error(error)
     return jsonify({"error": "Customer not found"}), HTTPStatus.NOT_FOUND
