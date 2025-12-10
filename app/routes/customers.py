@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
-from flask_jwt_extended import jwt_required
 
 from app.extensions import db
 from app.models import Customer
