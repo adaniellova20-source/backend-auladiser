@@ -1,5 +1,7 @@
 from datetime import date
+
 from marshmallow import Schema, fields, validate, validates, ValidationError
+
 from app.models import Customer
 
 class CustomerSchema(Schema):
