@@ -1,5 +1,4 @@
 from http import HTTPStatus
-import logging
 
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
@@ -11,13 +10,10 @@ from app.schemas import CustomerSchema
 
 customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
 
-logger = logging.getLogger(__name__)
-
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
 
 @customers_bp.get('')
-@jwt_required()
 def get_all_customers():
     if request.args:
         customers = Customer.query.filter_by(**request.args)
@@ -26,13 +22,11 @@ def get_all_customers():
     return jsonify(customers_schema.dump(customers)), HTTPStatus.OK
 
 @customers_bp.get('/<int:id>')
-@jwt_required()
 def get_customer_by_id(id):
     customer = Customer.query.get_or_404(id)
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.post('')
-@jwt_required()
 def create_customer():
     try:
         data = customer_schema.load(request.json)
@@ -45,7 +39,6 @@ def create_customer():
     return jsonify(customer_schema.dump(customer)), HTTPStatus.CREATED
 
 @customers_bp.put("/<int:id>")
-@jwt_required()
 def update_customer(id):
     try:
         data = customer_schema.load(request.json, partial=True)
@@ -66,7 +59,6 @@ def update_customer(id):
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.delete("/<int:id>")
-@jwt_required()
 def delete_customer(id):
     customer = Customer.query.get_or_404(id)
     db.session.delete(customer)
@@ -75,5 +67,4 @@ def delete_customer(id):
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
 def not_found(error):
-    logger.error(error)
     return jsonify({"error": "Customer not found"}), HTTPStatus.NOT_FOUND
