@@ -57,7 +57,3 @@ class CustomerSchema(Schema):
         exists = Customer.query.filter_by(email=value).first()
         if exists:
             raise ValidationError("Este correo ya está registrado.")
-
-class UserSchema(Schema):
-    username = fields.String(required=True)
-    password = fields.String(required=True)
