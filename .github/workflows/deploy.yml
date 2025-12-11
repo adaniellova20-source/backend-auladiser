@@ -27,7 +27,7 @@ jobs:
       - name: Run pytest
         env:
           PYTHONPATH: ${{ github.workspace }}
-        run: pytest
+        run: pytest --no-header --no-summary -q
 
   deploy:
     name: Deploy to Render
