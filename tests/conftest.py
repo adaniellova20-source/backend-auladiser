@@ -4,40 +4,28 @@ from datetime import date
 import pytest
 from flask.testing import FlaskClient
 
-os.environ["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-
 from app import create_app
 from app.extensions import db
 from app.models import Customer
 
+os.environ["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
 @pytest.fixture()
 def app():
     app = create_app()
-    app.config.update(
-        TESTING=True,
-        SQLALCHEMY_SESSION_OPTIONS={
-            "expire_on_commit": False
-        }
-    )
+    app.config["TESTING"] = True
+    app.config["SQLALCHEMY_SESSION_OPTIONS"] = {"expire_on_commit": False}
 
-    ctx = app.app_context()
-    ctx.push()
-
-    db.drop_all()
-    db.create_all()
-
-    yield app
-
-    db.session.remove()
-    db.drop_all()
-    ctx.pop()
-
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        yield app
+        db.session.remove()
+        db.drop_all()
 
 @pytest.fixture()
 def client(app) -> FlaskClient:
     return app.test_client()
-
 
 @pytest.fixture()
 def sample_customer(app):
