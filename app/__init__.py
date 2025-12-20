@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask
 from flask_cors import CORS
 
@@ -8,6 +10,8 @@ from app.routes import register_routes
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    logging.basicConfig(format="[%(asctime)s] %(levelname)s %(name)s:%(funcName)s: %(message)s")
 
     db.init_app(app)
     
