@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
@@ -8,6 +9,8 @@ from app.models import Customer
 from app.schemas import CustomerSchema
 
 customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
+
+logger = logging.getLogger(__name__)
 
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
@@ -23,6 +26,7 @@ def get_all_customers():
 @customers_bp.get('/<int:id>')
 def get_customer_by_id(id):
     customer = Customer.query.get_or_404(id)
+    logger.info("Customer consulted with id %d", customer.id)
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.post('')
@@ -30,6 +34,7 @@ def create_customer():
     try:
         data = customer_schema.load(request.json)
     except ValidationError as e:
+        logger.error("Validation error while creating customer: %s", e.messages)
         return jsonify(e.messages), HTTPStatus.BAD_REQUEST
 
     customer = Customer(**data)
@@ -42,6 +47,7 @@ def update_customer(id):
     try:
         data = customer_schema.load(request.json, partial=True)
     except ValidationError as e:
+        logger.error("Validation error while updating customer %s: %s", id, e.messages)
         return jsonify(e.messages), HTTPStatus.BAD_REQUEST
 
     customer = Customer.query.get_or_404(id)
@@ -55,6 +61,7 @@ def update_customer(id):
     customer.birthday = data.get('birthday', customer.birthday)
 
     db.session.commit()
+    logger.info("Customer updated with id %d", customer.id)
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
 @customers_bp.delete("/<int:id>")
@@ -62,8 +69,10 @@ def delete_customer(id):
     customer = Customer.query.get_or_404(id)
     db.session.delete(customer)
     db.session.commit()
+    logger.warning('Customer deleted with id %s', customer.id)    
     return jsonify(), HTTPStatus.NO_CONTENT
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
 def not_found(error):
+    logger.error("Customer not found: %s", error)
     return jsonify({"error": "Customer not found"}), HTTPStatus.NOT_FOUND
