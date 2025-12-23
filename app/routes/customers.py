@@ -13,15 +13,18 @@ customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
 logger = logging.getLogger(__name__)
 
 customer_schema = CustomerSchema()
-customers_schema = CustomerSchema(many=True)
 
 @customers_bp.get('')
 def get_all_customers():
     if request.args:
-        customers = Customer.query.filter_by(**request.args)
+        try:
+            filters = customer_schema.load(request.args, partial=True)
+        except ValidationError as e:
+            return jsonify(e.messages), HTTPStatus.BAD_REQUEST
+        customers = Customer.query.filter_by(**filters).all()
     else:
         customers = Customer.query.all()
-    return jsonify(customers_schema.dump(customers)), HTTPStatus.OK
+    return jsonify(customer_schema.dump(customers, many=True)), HTTPStatus.OK
 
 @customers_bp.get('/<int:id>')
 def get_customer_by_id(id):
