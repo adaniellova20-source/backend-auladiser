@@ -22,7 +22,7 @@ def app():
 def client(app) -> FlaskClient:
     return app.test_client()
 
-@pytest.fixture()
+@fixture()
 def sample_customer(app):
     customer = Customer(
         name="Juan",
