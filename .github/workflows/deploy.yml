@@ -1,37 +1,48 @@
-name: Pytest + Deploy to Render
+# Nombre del workflow que se muestra en GitHub Actions
+name: Pytest + Deploy a Render
 
+# Disparador: se ejecuta cuando hay un push a la rama "pytest"
 on:
   push:
     branches: [pytest]
 
 jobs:
+  # --------------------------------
+  # Job 1: Ejecutar pruebas automáticas
+  # --------------------------------
   test:
     runs-on: ubuntu-latest
 
     steps:
+      # Clona el repositorio
       - uses: actions/checkout@v4
 
+      # Configura la versión de Python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
 
-      - name: Install dependencies
+      # Instala las dependencias del proyecto
+      - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Run tests
+      # Ejecuta la suite de pruebas con pytest
+      - name: Ejecutar pruebas
         env:
-          PYTHONPATH: ${{ github.workspace }}
+          PYTHONPATH: ${{ github.workspace }}  # Asegura que la raíz del proyecto esté en el path
         run: pytest -q tests
 
+  # ------------------------------
+  # Job 2: Despliegue en Render
+  # Solo se ejecuta si las pruebas pasan
+  # ------------------------------
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: test   # Espera a que el job "test" termine correctamente
 
     steps:
-      - name: Trigger Render deploy
+      # Lanza el despliegue en Render usando un Deploy Hook
+      - name: Desplegar en Render
         env:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: |
-          test -n "$RENDER_DEPLOY_HOOK" || (echo "Missing RENDER_DEPLOY_HOOK secret" && exit 1)
-          curl -fsS -X POST "$RENDER_DEPLOY_HOOK"
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK" # Ejecuta el deploy en Render
