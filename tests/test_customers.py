@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from app.extensions import db
 from app.models import Customer
 
 def test_get_all_customers_empty(client):
@@ -78,5 +77,5 @@ def test_delete_customer(client, sample_customer, app):
     assert response.status_code == HTTPStatus.NO_CONTENT
 
     with app.app_context():
-        customer = db.session.get(Customer, sample_customer.id)
+        customer = Customer.query.get(sample_customer.id)
         assert customer is None
