@@ -31,7 +31,7 @@ def sample_customer(app):
         email="juan.perez@example.com",
         age=30,
         url="https://example.com",
-        birthday=date(1996, 5, 10),
+        birthday=date(1998, 5, 10),
     )
     db.session.add(customer)
     db.session.commit()
