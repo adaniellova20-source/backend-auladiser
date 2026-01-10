@@ -9,7 +9,7 @@ def test_get_all_customers_empty(client):
     assert data == []
 
 
-def test_get_customers_with_query_param(client):
+def test_get_customers_with_query_param(client, sample_customer):
     response = client.get("/customers?category=A")
     assert response.status_code == HTTPStatus.OK
 
