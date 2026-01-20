@@ -8,7 +8,7 @@ from app.extensions import db
 from app.models import Customer
 from app.schemas import CustomerSchema
 
-customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
+customers_bp = Blueprint('customers', __name__, url_prefix='api/customers')
 
 customer_schema = CustomerSchema()
 
