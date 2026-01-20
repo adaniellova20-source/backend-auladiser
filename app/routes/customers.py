@@ -7,9 +7,10 @@ from app.extensions import db
 from app.models import Customer
 from app.schemas import CustomerSchema
 
-customers_bp = Blueprint('customers', __name__, url_prefix='/customers')
+customers_bp = Blueprint('customers', __name__, url_prefix='/api/customers')
 
 customer_schema = CustomerSchema()
+
 
 @customers_bp.get('')
 def get_all_customers():
@@ -23,10 +24,12 @@ def get_all_customers():
         customers = Customer.query.all()
     return jsonify(customer_schema.dump(customers, many=True)), HTTPStatus.OK
 
+
 @customers_bp.get('/<int:id>')
 def get_customer_by_id(id):
     customer = Customer.query.get_or_404(id)
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
+
 
 @customers_bp.post('')
 def create_customer():
@@ -39,6 +42,7 @@ def create_customer():
     db.session.add(customer)
     db.session.commit()
     return jsonify(customer_schema.dump(customer)), HTTPStatus.CREATED
+
 
 @customers_bp.put("/<int:id>")
 def update_customer(id):
@@ -60,12 +64,14 @@ def update_customer(id):
     db.session.commit()
     return jsonify(customer_schema.dump(customer)), HTTPStatus.OK
 
+
 @customers_bp.delete("/<int:id>")
 def delete_customer(id):
     customer = Customer.query.get_or_404(id)
     db.session.delete(customer)
     db.session.commit()
     return jsonify(), HTTPStatus.NO_CONTENT
+
 
 @customers_bp.errorhandler(HTTPStatus.NOT_FOUND)
 def not_found(error):
