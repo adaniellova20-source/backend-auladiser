@@ -1,6 +1,4 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-
-from app.extensions import db
+from app.extensions import db, bcrypt
 
 class Customer(db.Model):
     __tablename__ = 'customers'
@@ -29,7 +27,7 @@ class User(db.Model):
 
     @password.setter
     def password(self, plaintext_password):
-        self.password_hash = generate_password_hash(plaintext_password)
+        self.password_hash = bcrypt.generate_password_hash(plaintext_password).decode('utf-8')
 
     def check_password(self, plaintext_password):
-        return check_password_hash(self.password_hash, plaintext_password)
+        return bcrypt.check_password_hash(self.password_hash, plaintext_password)
