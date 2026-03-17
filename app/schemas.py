@@ -53,9 +53,3 @@ class CustomerSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     is_active = fields.Bool()
-
-    @validates("email")
-    def validate_unique_email(self, value, **kwargs):
-        exists = Customer.query.filter_by(email=value).first()
-        if exists:
-            raise ValidationError("Este correo ya está registrado.")
