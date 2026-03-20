@@ -19,6 +19,6 @@ def login():
     if not user or not user.check_password(auth.password):
         return jsonify({"message": "Invalid credentials"}), HTTPStatus.UNAUTHORIZED
 
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.id))
 
     return jsonify({"access_token": token}), HTTPStatus.OK
