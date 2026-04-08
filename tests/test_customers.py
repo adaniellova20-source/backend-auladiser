@@ -3,14 +3,14 @@ from http import HTTPStatus
 from app.models import Customer
 
 def test_get_all_customers_empty(client):
-    response = client.get("/customers")
+    response = client.get("/api/customers")
     assert response.status_code == HTTPStatus.OK
     data = response.get_json()
     assert data == []
 
 
 def test_get_customers_with_query_param(client, sample_customer):
-    response = client.get("/customers?category=A")
+    response = client.get("/api/customers?category=A")
     assert response.status_code == HTTPStatus.OK
 
     data = response.get_json()
@@ -29,7 +29,7 @@ def test_create_customer_success(client):
         "birthday": "1996-01-01",
     }
 
-    response = client.post("/customers", json=payload)
+    response = client.post("/api/customers", json=payload)
 
     assert response.status_code == HTTPStatus.CREATED
     data = response.get_json()
@@ -47,12 +47,12 @@ def test_create_customer_validation_error(client):
         "birthday": "1990-01-01",
     }
 
-    response = client.post("/customers", json=payload)
+    response = client.post("/api/customers", json=payload)
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_get_customer_by_id(client, sample_customer):
-    response = client.get(f"/customers/{sample_customer.id}")
+    response = client.get(f"/api/customers/{sample_customer.id}")
     assert response.status_code == HTTPStatus.OK
     data = response.get_json()
     assert data["id"] == sample_customer.id
@@ -65,7 +65,7 @@ def test_update_customer(client, sample_customer):
         "age": 35,
     }
 
-    response = client.put(f"/customers/{sample_customer.id}", json=payload)
+    response = client.put(f"/api/customers/{sample_customer.id}", json=payload)
     assert response.status_code == HTTPStatus.OK
     data = response.get_json()
     assert data["name"] == "Carlos"
@@ -73,7 +73,7 @@ def test_update_customer(client, sample_customer):
 
 
 def test_delete_customer(client, sample_customer, app):
-    response = client.delete(f"/customers/{sample_customer.id}")
+    response = client.delete(f"/api/customers/{sample_customer.id}")
     assert response.status_code == HTTPStatus.NO_CONTENT
 
     with app.app_context():
