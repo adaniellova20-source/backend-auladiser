@@ -26,7 +26,7 @@ def test_create_customer_success(client):
         "age": 30,
         "email": "juan.perez@example.com",
         "url": "https://example.com",
-        "birthday": "1990-01-01",
+        "birthday": "1996-01-01",
     }
 
     response = client.post("/customers", json=payload)
