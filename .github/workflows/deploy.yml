@@ -24,7 +24,13 @@ jobs:
 
       # Instala las dependencias del proyecto
       - name: Instalar dependencias
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install ruff
+          
+      # Ejecuta validación estanar PEP8
+      - name: Validar PEP8
+        run: ruff check .
 
       # Ejecuta la suite de pruebas con pytest
       - name: Ejecutar pruebas
