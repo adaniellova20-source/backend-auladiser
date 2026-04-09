@@ -1,8 +1,6 @@
 from datetime import date
 
-from marshmallow import Schema, fields, validate, validates, ValidationError
-
-from app.models import Customer
+from marshmallow import Schema, fields, validate
 
 class CustomerSchema(Schema):
     id = fields.Integer(dump_only=True)
